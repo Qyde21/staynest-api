@@ -12,13 +12,18 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 app.use(cors({
-  origin: [
-    process.env.CLIENT_URL,
-    "http://localhost:3000",
-    "http://localhost:3001",
-    "https://staynest-3vw3scm9a-kiruiqyde-gmailcoms-projects.vercel.app",
-    "https://staynest-indol.vercel.app",
-  ],
+  origin: function(origin, callback) {
+    const allowed = [
+      'http://localhost:3000',
+      'http://localhost:3001',
+      'https://staynest-indol.vercel.app',
+    ];
+    if (!origin || allowed.includes(origin) || origin.endsWith('.vercel.app')) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true,
 }));
 app.use(express.json());
