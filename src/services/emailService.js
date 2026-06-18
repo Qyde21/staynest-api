@@ -5,7 +5,7 @@ const FROM = process.env.FROM_EMAIL || "onboarding@resend.dev";
 
 const sendBookingConfirmation = async ({ guestEmail, guestName, propertyTitle, location, checkin, checkout, nights, total, bookingRef }) => {
   try {
-    await resend.emails.send({
+    const result = await resend.emails.send({
       from: FROM,
       to: guestEmail,
       subject: `Booking Confirmed - ${propertyTitle} | StayNest`,
@@ -38,15 +38,15 @@ const sendBookingConfirmation = async ({ guestEmail, guestName, propertyTitle, l
         </div>
       `,
     });
-    console.log("Confirmation email sent to", guestEmail);
+    console.log("GUEST EMAIL RESULT:", JSON.stringify(result));
   } catch (err) {
-    console.error("Email error:", err);
+    console.error("GUEST EMAIL ERROR:", JSON.stringify(err, Object.getOwnPropertyNames(err)));
   }
 };
 
 const sendHostNewBooking = async ({ hostEmail, hostName, guestName, propertyTitle, checkin, checkout, nights, total, bookingRef }) => {
   try {
-    await resend.emails.send({
+    const result = await resend.emails.send({
       from: FROM,
       to: hostEmail,
       subject: `New Booking - ${propertyTitle} | StayNest`,
@@ -77,9 +77,9 @@ const sendHostNewBooking = async ({ hostEmail, hostName, guestName, propertyTitl
         </div>
       `,
     });
-    console.log("Host email sent to", hostEmail);
+    console.log("HOST EMAIL RESULT:", JSON.stringify(result));
   } catch (err) {
-    console.error("Host email error:", err);
+    console.error("HOST EMAIL ERROR:", JSON.stringify(err, Object.getOwnPropertyNames(err)));
   }
 };
 
