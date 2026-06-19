@@ -9,6 +9,7 @@ const mpesaRoutes = require("./routes/mpesa");
 const reviewsRoutes = require("./routes/reviews");
 const adminRoutes = require("./routes/admin");
 const hostRoutes = require("./routes/host");
+const uploadRoutes = require("./routes/upload");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -41,6 +42,7 @@ app.use("/api/mpesa", mpesaRoutes);
 app.use("/api/reviews", reviewsRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/host", hostRoutes);
+app.use("/api/upload", uploadRoutes);
 
 app.use((req, res) => {
   res.status(404).json({ error: "Route not found" });
