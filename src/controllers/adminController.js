@@ -66,7 +66,7 @@ const getBookings = async (req, res) => {
 const cancelBooking = async (req, res) => {
   try {
     const result = await pool.query(
-      `UPDATE bookings SET status = "cancelled" WHERE id = $1 RETURNING *`,
+      `UPDATE bookings SET status = 'cancelled' WHERE id = $1 RETURNING *`,
       [req.params.id]
     );
     res.json(result.rows[0]);
@@ -97,18 +97,20 @@ const toggleProperty = async (req, res) => {
 };
 
 const addProperty = async (req, res) => {
-  const { title, location, category, price_per_night, beds, baths, max_guests, highlight, description, amenities, images } = req.body;
+  const { title, location, category, price_per_night, beds, baths, max_guests, highlight, description, amenities, images, latitude, longitude } = req.body;
   if (!title || !location || !category || !price_per_night) {
     return res.status(400).json({ error: "Title, location, category and price are required" });
   }
   try {
     const result = await pool.query(
-      `INSERT INTO properties (title, location, category, price_per_night, beds, baths, max_guests, highlight, description, amenities, images)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING *`,
+      `INSERT INTO properties (title, location, category, price_per_night, beds, baths, max_guests, highlight, description, amenities, images, latitude, longitude)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) RETURNING *`,
       [title, location, category, Number(price_per_night), Number(beds) || 1, Number(baths) || 1, Number(max_guests) || 2,
        highlight || null, description || null,
        amenities ? amenities.split(",").map(a => a.trim()) : [],
-       images ? images.split(",").map(i => i.trim()) : []]
+       images ? images.split(",").map(i => i.trim()) : [],
+       latitude ? Number(latitude) : null,
+       longitude ? Number(longitude) : null]
     );
     res.status(201).json(result.rows[0]);
   } catch (err) {
