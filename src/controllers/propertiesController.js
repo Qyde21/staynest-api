@@ -1,6 +1,5 @@
 const pool = require("../db/pool");
 
-// GET /api/properties
 const getAllProperties = async (req, res) => {
   const { category, minPrice, maxPrice, guests, sort, location } = req.query;
   let query = "SELECT * FROM properties WHERE is_active = true";
@@ -43,12 +42,14 @@ const getAllProperties = async (req, res) => {
   }
 };
 
-// GET /api/properties/:id
 const getPropertyById = async (req, res) => {
   const { id } = req.params;
   try {
     const result = await pool.query(
-      "SELECT * FROM properties WHERE id = $1 AND is_active = true",
+      `SELECT p.*, u.first_name as host_first_name, u.last_name as host_last_name, u.phone as host_phone
+       FROM properties p
+       LEFT JOIN users u ON p.host_id = u.id
+       WHERE p.id = $1 AND p.is_active = true`,
       [id]
     );
     if (result.rows.length === 0) {
@@ -61,7 +62,6 @@ const getPropertyById = async (req, res) => {
   }
 };
 
-// GET /api/properties/category/:category
 const getPropertiesByCategory = async (req, res) => {
   const { category } = req.params;
   try {
@@ -76,7 +76,6 @@ const getPropertiesByCategory = async (req, res) => {
   }
 };
 
-// GET /api/properties/:id/availability
 const getPropertyAvailability = async (req, res) => {
   const { id } = req.params;
   try {
